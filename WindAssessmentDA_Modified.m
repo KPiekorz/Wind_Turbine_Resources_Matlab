@@ -109,6 +109,8 @@ wresults.overall.temperature = mean(table2array(wind(:,iT)));
 
 %% Wind Speed Distribution
 
+close all
+
 % Another view on the data is to compute and display the frequency the
 % averaged wind speed was with in a certain range.  Let's create the wind
 % speed distribution. 
@@ -134,6 +136,8 @@ clear ii vmax vnames
     
 %% Wind Rose
 
+close all
+
 % Create the wind rose plots where the direction represents the direction 
 % the wind is blowing from. 
 
@@ -141,87 +145,20 @@ clear ii vmax vnames
 % regarding the meteorological angle conversion.
 % (http://www.mathworks.com/matlabcentral/fileexchange/17748)
 figure('color','white')
-    fcnwindrose(wind.d49Avg,wind.v49Avg1,'dtype','meteo','n',16, ... 
+    fcnwindrose(wind.d49Avg, wind.v49Avg1,'dtype','meteo','n',16, ... 
          'labtitle','Height = 49 m, Sensor 1','lablegend','Velocity (m/s)')
 figure('color','white')
-    fcnwindrose(wind.d49Avg,wind.v49Avg2,'dtype','meteo','n',16, ... 
+    fcnwindrose(wind.d49Avg, wind.v49Avg2,'dtype','meteo','n',16, ... 
          'labtitle','Height = 49 m, Sensor 2','lablegend','Velocity (m/s)')
 figure('color','white')
-    fcnwindrose(wind.d38Avg,wind.v38Avg1,'dtype','meteo','n',16, ... 
+    fcnwindrose(wind.d38Avg, wind.v38Avg1,'dtype','meteo','n',16, ... 
          'labtitle','Height = 38 m, Sensor 1','lablegend','Velocity (m/s)')
 figure('color','white')
-    fcnwindrose(wind.d38Avg,wind.v38Avg2,'dtype','meteo','n',16, ... 
+    fcnwindrose(wind.d38Avg, wind.v38Avg2,'dtype','meteo','n',16, ... 
          'labtitle','Height = 38 m, Sensor 2','lablegend','Velocity (m/s)')
 figure('color','white')
-    fcnwindrose(wind.d20Avg,wind.v20Avg,'dtype','meteo','n',16, ... 
-         'labtitle','Height = 20 m','lablegend','Velocity (m/s)')
-
-% %% Monthly Average Wind Speeds
-% % Compute and display the monthly average wind speeds for each wind speed
-% % sensor. 
-% 
-% % Find the months and years of the data
-% m = getMonth(wind.t);
-% y = getYear(wind.t);
-% 
-% dateGroups = unique([y m], 'rows');
-% dateGroups = sortrows(dateGroups,[1 2]);
-% 
-% % Initialize and compute monthly average
-% nGroups = size(dateGroups,1);
-% wresults.monthavg.date = datestr([dateGroups ones(nGroups,1) ... 
-%                                   zeros(nGroups,3)],'mmm-yy');
-% wresults.monthavg.data = zeros(nGroups,length(ivh));
-% for mm = 1:length(ivh)
-%     for nn = 1:nGroups
-%         idx = (y == dateGroups(nn,1)) & (m == dateGroups(nn,2));
-%         wresults.monthavg.data(nn,mm) = mean(table2array(wind(idx,ivh(mm))));
-%     end
-% end
-% 
-% clear mm nn idx m y
-% 
-% % Plot the results
-% figure
-%     plot(wresults.monthavg.data,'-o');
-%     ylabel('v_{monthly} (m/s)')
-%     xlim([1 nGroups])
-%     set(gca,'XTick',1:2:nGroups)
-%     set(gca,'XTickLabel',wresults.monthavg.date(1:2:nGroups,:))
-%     legend(wind.Properties.VarNames(ivh),'Location','Best')
-% 
-% clear dateGroups nGroups
-% 
-% %% Diurnal Average Wind Speeds
-% % Compute and display the diurnal average wind speeds for each wind speed
-% % sensor. The hourly averages will average data from the begining of the
-% % hour to the end, for example from 10:00 am to 10:59 am.  
-% 
-% % Find the list of all possible hours in which data was acquired. 
-% h = getHour(wind.t);
-% wresults.diurnal.hour = unique(h);
-% nh = length(wresults.diurnal.hour);
-% 
-% % Initialize and compute diurnal averages
-% 
-% wresults.diurnal.data = zeros(nh,length(ivh));
-% 
-% for mm = 1:length(ivh)
-%     for nn = 1:nh
-%         I = h == wresults.diurnal.hour(nn);
-%         wresults.diurnal.data(nn,mm) = mean(table2array(wind(I,ivh(mm))));
-%     end
-% end
-% 
-% clear h nh I mm nn
-% 
-% % Plot the results
-% figure
-%     plot(wresults.diurnal.hour,wresults.diurnal.data,'-o');
-%     ylabel('v_{diurnal} (m/s)')
-%     xlabel('Hour of Day')
-%     xlim([wresults.diurnal.hour(1) wresults.diurnal.hour(end)])
-%     legend(wind.Properties.VarNames(ivh),'Location','SouthWest')
+    fcnwindrose(wind.d60Avg, wind.v60Avg,'dtype','meteo','n',16, ... 
+         'labtitle','Height = 60 m','lablegend','Velocity (m/s)')
 
 %% Turbulence Intensity
 
