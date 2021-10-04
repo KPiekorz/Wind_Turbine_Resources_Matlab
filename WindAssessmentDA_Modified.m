@@ -83,7 +83,7 @@ clc
 npass = size(wind,1);
 vhub = zeros(npass,1);
 
-parfor ii = 1:100
+parfor ii = 1:npass
 
     % Compute instantaneous power law shear models
     cfobj = fcnpowerlaw(hv, table2array(wind(ii, iv)))
@@ -276,8 +276,7 @@ wresults.short.Prated = Prated;
 % Compute Pavgshort as the integral of the wind turbine power curve and the
 % pdf of the wind speed at the hub height.  
 dx = mean(diff(wresults.vdist.vbins));      % integral steps (m/s)
-Pavgshort = sum(fcnpowercurve(wresults.vdist.vbins, Prated).* ... 
-                wresults.vdist.vhub(:)) * dx;
+Pavgshort = sum(fcnpowercurve(wresults.vdist.vbins, Prated).* wresults.vdist.vhub(:)) * dx;
 
 wresults.short.Pavgshort = Pavgshort;
             
