@@ -162,6 +162,8 @@ figure('color','white')
 
 %% Turbulence Intensity
 
+close all
+
 % Compute the turbulence intensity for each observation and velocity 
 % sensor and the distribution for each sensor.  The turbulence intensity is
 % defined as the 10-minute standard deviation of the velocity divided by 
@@ -174,23 +176,27 @@ wresults.ti.data = table2array(wind(:,iv+1))./table2array(wind(:,iv));
 timax = ceil(10*max(max(wresults.ti.data)))/10;
 vmax = ceil(max(max(table2array(wind(:,iv)))));
 
+vnames_turbulance = ["v49Avg1" "v49Avg2" "v38Avg1" "v38Avg2" "v60Avg"];
+
 % Visualize data
 for ii = 1:length(iv)
-    figure
-        subplot(2,1,1);
-            plot(table2array(wind(:,iv(ii))),wresults.ti.data(:,ii),'+')
-            xlim([0 ceil(vmax)])
-            ylim([0 ceil(10*timax)/10])
-            box on
-            %xlabel('Wind velocity (m/s)')
-            ylabel('TI')
-            title(['Turbulence Intensity for ' ...
-                char(wind.Properties.VarNames(iv(ii)))])
-        subplot(2,1,2);
-            boxplot(wresults.ti.data(:,ii),round(table2array(wind(:,iv(ii)))))
-            xlim([0 ceil(vmax)])
-            xlabel('Wind velocity (m/s)')
-            ylabel('TI')
+
+    figure(ii)
+    subplot(2,1,1);
+    plot(table2array(wind(:,iv(ii))), wresults.ti.data(:, ii), '+')
+    xlim([0 ceil(vmax)])
+    ylim([0 ceil(10*timax)/10])
+    box on
+    xlabel('Wind velocity (m/s)')
+    ylabel('TI')
+    title(['Turbulence Intensity for ' ...
+          char(vnames_turbulance(ii))])
+    subplot(2,1,2);
+    boxplot(wresults.ti.data(:,ii), round(table2array(wind(:, iv(ii)))))
+    xlim([0 ceil(vmax)])
+    xlabel('Wind velocity (m/s)')
+    ylabel('TI')
+
 end
 
 clear ii timax vmax
@@ -223,29 +229,6 @@ figure
 
 clear x y cfobj cfgood
 
-% % Fit for monthly average wind speed
-% wresults.bl.monthly.date = wresults.monthavg.date;
-% nmonths = length(wresults.bl.monthly.date);
-% wresults.bl.monthly.cfobj = cell(length(nmonths),1);
-% wresults.bl.monthly.cfgood = cell(length(nmonths),1);
-% wresults.bl.monthly.alpha = zeros(length(nmonths),1);
-% 
-% for ii = 1:nmonths
-%     [cfobj,cfgood] = fcnpowerlaw(hv, ... 
-%                                   wresults.monthavg.data(ii,1:length(hv)));
-%     alpha = coeffvalues(cfobj);
-%     wresults.bl.monthly.cfobj{ii} = cfobj;
-%     wresults.bl.monthly.cfgood{ii} = cfgood;
-%     wresults.bl.monthly.alpha(ii) = alpha(2); 
-% end
-% 
-% clear ii cfobj cfgood alpha
-% 
-% % Plot monthly and overal alpha values
-% fcnalphaplot(1:nmonths,wresults.bl.monthly.alpha,wresults.bl.overall.alpha)
-%     
-% clear nmonths
-
 %% Wind Power and Capacity Factor Estimate
 
 % Compute the mean wind speed, kinetic energy flux, and the capacity factor
@@ -256,13 +239,15 @@ clear x y cfobj cfgood
 
 %% Short Term Kinetic Energy Flux
 
+close all
+
 % Compute the power density in the wind as measured by the meteorological
 % tower.  This will represent the local, short-term power that was 
 % available to any wind turbine installed at this location during the
 % measurement period.  
 
 % Compute instantaneous kinetic energy flux
-wind.phub = 0.5*wind.rho.*wind.vhub.^3;
+wind.phub = 0.5 * wind.rho.*wind.vhub.^3;
 
 % Compute and store mean wind kinetic energy flux at hub height
 wresults.overall.phub = mean(wind.phub);
@@ -272,29 +257,32 @@ disp(' ')
 
 % Plot instantaneous hub wind speeds and KE flux
 figure
-fcnKEplot(wind,ivh,wresults)
+fcnKEplot(wind, ivh, wresults)
 
 %% Short Term Average Turbine Power and Capacity Factor
+
+close all
 
 % Estimate the average turbine power and capacity factor for this site 
 % using the short-term estimated hub height velocity distribution.  These
 % calculations require knowledge of the proposed wind turbine model and its
-% power curve.  For this demo, let's assume a 1.5 MW wind turbine with a
+% power curve.  For this demo, let's assume a 5 MW wind turbine with a
 % power curve modelled in fcnpowercurve.
 
 % Wind turbine rated power (W)
-Prated = 1500e3;
+Prated = 5000e3;
 wresults.short.Prated = Prated;
 
 % Compute Pavgshort as the integral of the wind turbine power curve and the
 % pdf of the wind speed at the hub height.  
 dx = mean(diff(wresults.vdist.vbins));      % integral steps (m/s)
-Pavgshort = sum(fcnpowercurve(wresults.vdist.vbins,Prated).* ... 
-                wresults.vdist.vhub(:))*dx;
+Pavgshort = sum(fcnpowercurve(wresults.vdist.vbins, Prated).* ... 
+                wresults.vdist.vhub(:)) * dx;
+
 wresults.short.Pavgshort = Pavgshort;
             
 % Compute short-term capacity factor
-CFshort = Pavgshort/Prated;
+CFshort = Pavgshort / Prated;
 wresults.short.CFshort = CFshort;
 
 % Display results
