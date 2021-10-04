@@ -81,9 +81,9 @@ wind.t = datenum(char(wind.date),' dd-mmm-yyyy HH:MM:SS');
 hhub = 80;                % hub height (m)
 
 % Additional information about meteorological tower
-hv = [49 49 38 38 20];    % vector of heights for velocity (m)
+hv = [49 49 38 38 60];    % vector of heights for velocity (m)
 hvh = [hv hhub];          % vector of heights for velocity with hhub (m)
-hd = [49 38 20];          % vector of heights for direction (m)
+hd = [49 38 60];          % vector of heights for direction (m)
 hT = 2;                   % vector of heights for temperature (m) 
 
 nobs = size(wind,1);      % # of observations
@@ -135,6 +135,7 @@ wresults = [];       % structure variable for results
 % the data.     
 
 % Time-series plots
+clc
 close all
 figure
 fcnvdttimeplot(wind)
@@ -145,23 +146,20 @@ fcnvdttimeplot(wind)
 % and will be ignored by most operations.  Some operations do require no
 % missing values, such as the matrix inverse.  
 
-%%
-% *Missing date ranges*
-% 
+%% Missing date ranges
+
 % Data is missing from 9/3/2007 17:00:00 to 10/1/2007 5:50:00 and from
 % 4/15/2008 00:00:00 to 4/15/2008 16:50:00.  
 wresults.missingdates = fcnmissingdates(wind.t);
 
-%%
-% *Prepare for remaining data quality tests*
-% 
+%% Prepare for remaining data quality tests
+
 % Initialize storage for data quality flags
 dqflag = fcnDataQuality(wind.t);
 fcnPlotDataQuality(dqflag);
 
-%%
-% *Missing values*
-% 
+%% Missing values
+
 % (need to check all data columns)
 I = isnan(double(wind(:,2:(length(hv)*4+length(hd)*4+length(hT)*4+1))));
 mvflag = any(I,2);
@@ -175,9 +173,8 @@ fcnPlotDataQuality(dqflag);
 
 clear I
 
-%%
-% *Clipped velocity values*
-% 
+%% Clipped velocity values
+
 % (only check primary velocity measurements)
 a = double(wind(:,iv));
 vflags = a < vrange(1) | a > vrange(2);
@@ -202,9 +199,8 @@ fcnPlotDataQuality(dqflag);
 
 clear ii a txt
 
-%%
-% *Clipped direction values*
-% 
+%% Clipped direction values
+
 % (only check primary direction measurements)
 a = double(wind(:,id));
 dflags = a < drange(1) | a > drange(2);
@@ -229,8 +225,8 @@ fcnPlotDataQuality(dqflag);
 
 clear ii a txt
 
-%%
-% *Abnormal temperature values*
+%% Abnormal temperature values
+
 a = double(wind(:,iT));
 Tmax = double(wind(:,iT+2));
 Tmin = double(wind(:,iT+3));
@@ -258,9 +254,8 @@ fcnPlotDataQuality(dqflag);
 
 clear ii a txt Tmin Tmax
 
-%%
-% *Icing conditions*
-%
+%% Icing conditions
+
 % Test data to ensure sensors are not affected by icing, which would result
 % in extremely inaccurate values biased towards zero.  Icing is present if
 % the following condition is true.  
@@ -296,9 +291,8 @@ fcnPlotDataQuality(dqflag);
 
 clear nice I ii a txt
 
-%%
-% *Stuck wind direction sensor test*
-% 
+%% Stuck wind direction sensor test
+
 % This test is to look for cases where the wind direction sensor might be
 % prevented from moving due to inteference from forgien objects. The
 % condition is tested by a low standard deviation and near-zero change in

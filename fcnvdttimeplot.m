@@ -26,20 +26,26 @@ xt = datenum([dateGroups ones(size(dateGroups,1),1) ...
 
 % Create figure
 sp1 = subplot(3,1,1);
-    plot(wind.t,wind.v49Avg1,wind.t,wind.v49Avg2, ...
-         wind.t,wind.v38Avg1,wind.t,wind.v38Avg2,wind.t,wind.v20Avg)
-    legend('v49a','v49b','v38a','v38b','v20')
+    plot(wind.t, wind.v38Avg1, wind.t, wind.v38Avg2, ...
+         wind.t, wind.v49Avg1, wind.t, wind.v49Avg2, ...
+         wind.t, wind.v60Avg)
+    title("Average wind speed on heights")
+    legend('v38a','v38b','v49a','v49b','v60')
     ylabel('v_{avg} (m/s)')
     set(gca,'XTick',xt)
     set(gca,'XTickLabel',cell(1,length(xt)))
 sp2 = subplot(3,1,2);
-    plot(wind.t,wind.d49Avg,wind.t,wind.d38Avg,wind.t,wind.d20Avg)
-    legend('d49','d38','d20')
+    plot(wind.t, wind.d38Avg, ...
+         wind.t, wind.d49Avg, ...
+         wind.t, wind.d60Avg)
+    title("Wind direction on heights")
+    legend('d38','d49','d60')
     ylabel('d_{avg} (deg)')
     set(gca,'XTick',xt)
     set(gca,'XTickLabel',cell(1,length(xt)))
 sp3 = subplot(3,1,3);
-    plot(wind.t,wind.T3Avg)
+    plot(wind.t, wind.T3Avg)
+    title("Temperature")
     legend('T3')
     ylabel('T_{avg} (\circC)')
     set(gca,'XTick',xt)
