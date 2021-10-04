@@ -83,13 +83,13 @@ clc
 npass = size(wind,1);
 vhub = zeros(npass,1);
 
-parfor ii = 1:2
+parfor ii = 1:100
 
     % Compute instantaneous power law shear models
     cfobj = fcnpowerlaw(hv, table2array(wind(ii, iv)))
 
     % Compute estimate of wind speed at the wind turbine hub height
-    vhub(ii) = cfobj(hhub)
+    vhub(ii) = cfobj(hhub);
 end
 
 wind.vhub = vhub;
@@ -100,10 +100,13 @@ clear cfobj vhub
 
 % Store overall averages (include hub height velocity with the velocity
 % data)
-wresults.overall.velocity = mean(double(wind(:,ivh)));
-wresults.overall.direction = mean(double(wind(:,id)));
-wresults.overall.temperature = mean(double(wind(:,iT)));   
-        
+wresults.overall.velocity = mean(table2array(wind(:,ivh)));
+wresults.overall.direction = mean(table2array(wind(:,id)));
+wresults.overall.temperature = mean(table2array(wind(:,iT))); 
+
+% fprintf("Overall averages, velocity: %f, direction: %f, temperature: %f", ...
+%         wresults.overall.velocity, wresults.overall.direction, wresults.overall.temperature);        
+
 %% Wind Speed Distribution
 
 % Another view on the data is to compute and display the frequency the
