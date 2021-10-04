@@ -112,19 +112,22 @@ wresults.overall.temperature = mean(table2array(wind(:,iT)));
 % Another view on the data is to compute and display the frequency the
 % averaged wind speed was with in a certain range.  Let's create the wind
 % speed distribution. 
-vmax = max(max(double(wind(:,ivh))));
+vmax = max(max(table2array(wind(:,ivh))));
 
 % Bin centers for histogram (m/s)
 wresults.vdist.vbins = (0:1:ceil(vmax))';
 
-vnames = wind.Properties.VarNames(ivh);
+% vnames = wind.Properties.VarNames(ivh);
+vnames = ["v49Avg1" "v49Avg2" "v38Avg1" "v38Avg2" "v60Avg" "vhub"];
+
 % Compute distributions for all averaged velocity data columns included the
 % estimate at the hub height
 for ii = 1:length(vnames)
-    wresults.vdist.(vnames{ii}) = hist(wind.(vnames{ii}), ... 
-                                       wresults.vdist.vbins)/npass;
-    figure
-        fcnvdistplot(wresults,vnames{ii})
+
+    wresults.vdist.(vnames{ii}) = hist(wind.(vnames{ii}), wresults.vdist.vbins) / npass;
+
+    figure(ii);
+    fcnvdistplot(wresults, vnames{ii});
 end
 
 clear ii vmax vnames
@@ -172,7 +175,7 @@ figure('color','white')
 % for mm = 1:length(ivh)
 %     for nn = 1:nGroups
 %         idx = (y == dateGroups(nn,1)) & (m == dateGroups(nn,2));
-%         wresults.monthavg.data(nn,mm) = mean(double(wind(idx,ivh(mm))));
+%         wresults.monthavg.data(nn,mm) = mean(table2array(wind(idx,ivh(mm))));
 %     end
 % end
 % 
@@ -206,7 +209,7 @@ figure('color','white')
 % for mm = 1:length(ivh)
 %     for nn = 1:nh
 %         I = h == wresults.diurnal.hour(nn);
-%         wresults.diurnal.data(nn,mm) = mean(double(wind(I,ivh(mm))));
+%         wresults.diurnal.data(nn,mm) = mean(table2array(wind(I,ivh(mm))));
 %     end
 % end
 % 
@@ -228,17 +231,17 @@ figure('color','white')
 % the 10-minute average velocity. 
 
 % Compute turbulence intensities
-wresults.ti.data = double(wind(:,iv+1))./double(wind(:,iv));
+wresults.ti.data = table2array(wind(:,iv+1))./table2array(wind(:,iv));
 
 % Display turbulence intensities versus wind speed for each sensor
 timax = ceil(10*max(max(wresults.ti.data)))/10;
-vmax = ceil(max(max(double(wind(:,iv)))));
+vmax = ceil(max(max(table2array(wind(:,iv)))));
 
 % Visualize data
 for ii = 1:length(iv)
     figure
         subplot(2,1,1);
-            plot(double(wind(:,iv(ii))),wresults.ti.data(:,ii),'+')
+            plot(table2array(wind(:,iv(ii))),wresults.ti.data(:,ii),'+')
             xlim([0 ceil(vmax)])
             ylim([0 ceil(10*timax)/10])
             box on
@@ -247,7 +250,7 @@ for ii = 1:length(iv)
             title(['Turbulence Intensity for ' ...
                 char(wind.Properties.VarNames(iv(ii)))])
         subplot(2,1,2);
-            boxplot(wresults.ti.data(:,ii),round(double(wind(:,iv(ii)))))
+            boxplot(wresults.ti.data(:,ii),round(table2array(wind(:,iv(ii)))))
             xlim([0 ceil(vmax)])
             xlabel('Wind velocity (m/s)')
             ylabel('TI')
