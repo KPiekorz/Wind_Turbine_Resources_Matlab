@@ -3,17 +3,15 @@
 
 wind = readtable('winddata_new.txt');
 
-%% Initialize storage of hub velocities, instantaneous kinetic energy flux, and air density in the dataset
-
+% Initialize storage of hub velocities, instantaneous kinetic energy flux, and air density in the dataset
 wind.vhub = zeros(size(wind,1),1);
 wind.phub = zeros(size(wind,1),1);
 wind.rho = zeros(size(wind,1),1);
                             
-%% Convert date to a Serial Date Number (1 = January 1, 0000 A.D.)
-
+% Convert date to a Serial Date Number (1 = January 1, 0000 A.D.)
 wind.t = datenum(char(wind.date),' dd-mmm-yyyy HH:MM:SS');
 
-%% Input Additional Analysis Information
+% Input Additional Analysis Information
 
 % Additional information about proposed wind turbine
 hhub = 80;                % hub height (m)
@@ -29,6 +27,7 @@ nobs = size(wind,1);      % # of observations
 % Air properties
 patm = 101e3;             % atmospheric pressure (Pa)
 Rair = 287;               % gas constant for air (J/kg K)
+
 % air density (kg/m^3)
 wind.rho = patm./(Rair*(wind.T3Avg+273.15));
 
@@ -51,6 +50,7 @@ Trange = [-50 150];       % expected range for temperature measurements (C)
 vice = 1;              % critical value for wind speed (m/s)
 dstdice = 0.5;         % critical value for the std of wind direction (deg)
 Tice = 2;              % critical value for temperature (C)
+
 % indices of sensor sets for icing tests [vAvg dSD TAvg]
 iice = [ 2 23 34;
          6 23 34;
@@ -68,8 +68,7 @@ istuck = [22 26 30];   % indices for wind direction sensor stuck test
 % Create variable to store statistical analysis results
 wresults = [];       % structure variable for results
 
-%% Visualize Data
-
+% Visualize Data
 clc
 close all
 figure
@@ -80,23 +79,20 @@ fcnvdttimeplot(wind)
 % Estimate the wind velocity at hub height using a power law model fitted
 % to the measured wind velocities for each time sample.  
 
-% if exist('vhubdata.mat','file')
-%     load vhubdata
-%     wind.vhub = vhub;
-% else
-    
-    vhub = zeros(npass,1);
-    parfor ii = 1:npass
-        % Compute instantaneous power law shear models
-        cfobj = fcnpowerlaw(hv,double(wind(ii,iv)));
-    
-        % Compute estimate of wind speed at the wind turbine hub height
-        vhub(ii) = cfobj(hhub);
-    end
-%    save('vhubdata.mat','vhub')
-    wind.vhub = vhub;
-    
-% end
+clc
+npass = size(wind,1);
+vhub = zeros(npass,1);
+
+parfor ii = 1:2
+
+    % Compute instantaneous power law shear models
+    cfobj = fcnpowerlaw(hv, table2array(wind(ii, iv)))
+
+    % Compute estimate of wind speed at the wind turbine hub height
+    vhub(ii) = cfobj(hhub)
+end
+
+wind.vhub = vhub;
 
 clear cfobj vhub
 
