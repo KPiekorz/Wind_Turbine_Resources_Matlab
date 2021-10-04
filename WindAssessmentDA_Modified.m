@@ -343,6 +343,7 @@ fcnPlotDataQuality(dqflag);
 clear stuck a Itemp Istd Idiff txt s e ii jj ndt
 
 %% Remove Suspect Data
+
 % At this point we must make a decision on how to handle the data that 
 % failed the data quality assurance tests.  Options to consider include: 
 % *Replacing the failed data with an average value of the data that passed.
@@ -368,9 +369,8 @@ clear vflags vice vrange hdq nobs mvflag nIice nabT nclip ndir nstuck
 % charactertics of the site.  This will include summary statistics, wind
 % rose plots, and a more detailed look into specifics.  
 
-%%
-% *Data Summary*
-% 
+%% Data Summary
+
 % Let's get a summary of the data.  The dataset array offers a nice
 % features for that.  Also, let's replot the time-series data without the
 % failed data points.  
@@ -383,6 +383,7 @@ figure
 fcnvdttimeplot(wind)
 
 %% Hub Height Wind Velocity Estimate
+
 % Estimate the wind velocity at hub height using a power law model fitted
 % to the measured wind velocities for each time sample.  
 
@@ -407,6 +408,7 @@ fcnvdttimeplot(wind)
 clear cfobj vhub
 
 %% Compute Overall Averages
+
 % Store overall averages (include hub height velocity with the velocity
 % data)
 wresults.overall.velocity = mean(double(wind(:,ivh)));
@@ -414,6 +416,7 @@ wresults.overall.direction = mean(double(wind(:,id)));
 wresults.overall.temperature = mean(double(wind(:,iT)));   
         
 %% Wind Speed Distribution
+
 % Another view on the data is to compute and display the frequency the
 % averaged wind speed was with in a certain range.  Let's create the wind
 % speed distribution. 
@@ -435,6 +438,7 @@ end
 clear ii vmax vnames
     
 %% Wind Rose
+
 % Create the wind rose plots where the direction represents the direction 
 % the wind is blowing from. 
 
@@ -525,6 +529,7 @@ figure('color','white')
 %     legend(wind.Properties.VarNames(ivh),'Location','SouthWest')
 
 %% Turbulence Intensity
+
 % Compute the turbulence intensity for each observation and velocity 
 % sensor and the distribution for each sensor.  The turbulence intensity is
 % defined as the 10-minute standard deviation of the velocity divided by 
@@ -559,6 +564,7 @@ end
 clear ii timax vmax
         
 %% Shear Profile
+
 % Compute the shear exponent of the power law model for the atmospheric 
 % boundary layer.  The power law model is of the form u = a*z^alpha.  The
 % coefficient, a, and the exponent, alpha, are estimated using regression
@@ -609,15 +615,15 @@ clear x y cfobj cfgood
 % clear nmonths
 
 %% Wind Power and Capacity Factor Estimate
+
 % Compute the mean wind speed, kinetic energy flux, and the capacity factor
 % using both the local, short term data and correlation to a data source
 % with long term data accessible.  This report correlates the local site at
 % Cohasset to the weather station at Boston Logan Internation Airport
 % (KBOS).  
 
-%%
-% *Short Term Kinetic Energy Flux*
-% 
+%% Short Term Kinetic Energy Flux
+
 % Compute the power density in the wind as measured by the meteorological
 % tower.  This will represent the local, short-term power that was 
 % available to any wind turbine installed at this location during the
@@ -636,9 +642,8 @@ disp(' ')
 figure
 fcnKEplot(wind,ivh,wresults)
 
-%% 
-% *Short Term Average Turbine Power and Capacity Factor*
-% 
+%% Short Term Average Turbine Power and Capacity Factor
+
 % Estimate the average turbine power and capacity factor for this site 
 % using the short-term estimated hub height velocity distribution.  These
 % calculations require knowledge of the proposed wind turbine model and its
@@ -667,97 +672,3 @@ disp(['Short-term Capacity Factor (%): ' num2str(CFshort*100,'%2.0f')])
 disp(' ')
 
 clear Prated Pavgshort dx CFshort
-
-% %% 
-% % *Long Term Wind Speed*
-% % 
-% % Calculate the long term using the measure-correlate-predict (MCP) method
-% % comparing the local Cohasset data to long term data from Boston Logan
-% % Internation Airport in Massachusetts.  In particular, the linear regress 
-% % method is used.  
-% 
-% % Retreive concurrent data from reference site
-% % This example pulls historic data from the Wunderground website at
-% % http://www.wunderground.com/history/airport for weather tower KBOS
-% % located at Boston Logan Airport.  
-% if exist('kbosdata.mat','file')
-%     load('kbosdata.mat')
-% else
-%     kbosds = fcnGrabWeatherData('KBOS',wind.date(1),wind.date(end));
-% end
-% 
-% % Create data set for regression
-% t = kbosds.Datenum;                % time vector (datenum)
-% vlongterm = kbosds.WindSpeedMS;    % wind speed at long-term location (m/s)
-% % Interpolate the measured data from the site under study to correspond to
-% % same sample times as the long-term data.
-% vsite = interp1(wind.t,wind.v49Avg1,t);
-% 
-% % Remove data from period of missing dates
-% md = wresults.missingdates;
-% I = ones(length(t),1);
-% for ii = 1:size(md,1)
-%     Itemp = ~(t >= md(ii,1) & t <= md(ii,2));
-%     I = I & Itemp;
-% end
-% vlongterm = vlongterm(I);
-% vsite = vsite(I);
-% 
-% % Preform regression
-% [cfobj,cfgood] = fcnlinear(vlongterm,vsite);
-% wresults.long.mcp.cfobj = cfobj;
-% wresults.long.mcp.cfgood = cfgood;
-% 
-% % Use long-term average at weather station site to estimate long-term
-% % average at site under consideration
-% %vbarlt = fcnGrabLongTermWind('KBOS',1978,2008);    % takes 3.5 m to run
-% vbarlt = 4.9817;
-% 
-% % Use regression to estimate the long-term wind speed at the site
-% v49barlt = cfobj(vbarlt);
-% wresults.long.v49barlt = v49barlt;
-% wresults.long.v49barltci = predint(cfobj,v49barlt,0.95);
-% 
-% % Estimate long-term wind speed at hub height using the overall estimate
-% % for the shear coefficient. 
-% alpha = wresults.bl.overall.alpha;
-% vhublt = v49barlt*(hhub/hv(1))^alpha;
-% wresults.long.vhublt = vhublt;
-% 
-% % Display results
-% disp(['Long-term Wind Speed at Hub Height (m/s): ' num2str(vhublt,'%3.1f')])
-% 
-% %% 
-% % *Long Term Power and Capacity Factor*
-% % 
-% % Estimate wind speed distribution at hub height for the long term average
-% % Note: Assume a Rayleigh distribution with parameter b, which can be
-% % related to the mean 
-% b = vhublt*sqrt(2/pi);
-% vbins = wresults.vdist.vbins;
-% vltpdf = raylpdf(vbins,b);
-% 
-% % Wind turbine rated power (W)
-% Prated = wresults.short.Prated;
-% wresults.long.Prated = Prated;
-% 
-% % Compute Pavglong as the integral of the wind turbine power curve and the
-% % pdf of the wind speed at the hub height.  
-% dx = mean(diff(wresults.vdist.vbins));      % integral steps (m/s)
-% Pavglong = sum(fcnpowercurve(vbins,Prated).*vltpdf)*dx;
-% wresults.long.Pavglong = Pavglong;
-%             
-% % Compute long-term capacity factor
-% CFlong = Pavglong/Prated;
-% wresults.long.CFlong = CFlong;
-% 
-% % Display results
-% disp(['Assumed wind turbine rated power (MW): ' num2str(Prated/1e6,'%3.1f')])
-% disp(['Long-term averaged power (kW): ' num2str(Pavglong/1e3,'%3.0f')])
-% disp(['Long-term Capacity Factor (%): ' num2str(CFlong*100,'%2.0f')])
-% 
-% clear ii md cfobj cfgood I Itemp vlongterm vsite t kbosds Prated
-% clear vbarlt v49barlt vhublt alpha Pavglong CFlong dx b vbins vltpdf
-% 
-%%
-%clear all; close all;
