@@ -70,6 +70,8 @@ istuck = [22 26 30];   % indices for wind direction sensor stuck test
 % Create variable to store statistical analysis results
 wresults = [];       % structure variable for results
 
+npass = size(wind,1);
+
 %% Visualize Data
 
 clc
@@ -79,11 +81,11 @@ fcnvdttimeplot(wind)
 
 %% Hub Height Wind Velocity Estimate
 
+close all
+
 % Estimate the wind velocity at hub height using a power law model fitted
 % to the measured wind velocities for each time sample.  
 
-clc
-npass = size(wind,1);
 vhub = zeros(npass,1);
 
 parfor ii = 1:npass
@@ -253,7 +255,7 @@ close all
 wind.phub = 0.5 * wind.rho.*wind.vhub.^3;
 
 % Compute and store mean wind kinetic energy flux at hub height
-wresults.overall.phub = mean(wind.phub);
+wresults.overall.phub = mean(wind.phub)
 % display to published report
 disp(['Mean KE flux (W/m^2): ' num2str(wresults.overall.phub,'%3.0f')])
 disp(' ')

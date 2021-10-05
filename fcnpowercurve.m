@@ -29,7 +29,7 @@ p = zeros(size(v));
 p(v < von) = 0;
 % Ramp up (use model)
 I = (v >= von & v < vc);
-coefficients = [4.4947 30.7702 260.034 624.5262];
+coefficients = [4.4947 -30.7702 260.034 -624.5262];
 p(I) = polyval(coefficients, v(I));
 % At rated power
 p(v >= vc & v <= vout) = prated;
