@@ -16,13 +16,13 @@ wind.t = datenum(char(wind.date),' dd-mmm-yyyy HH:MM:SS');
 % Input Additional Analysis Information
 
 % Additional information about proposed wind turbine
-hhub = 80;                % hub height (m)
+hhub = 120;                % hub height (m) (80)
 
 % Additional information about meteorological tower
 hv = [49 49 38 38 60];    % vector of heights for velocity (m)
 hvh = [hv hhub];          % vector of heights for velocity with hhub (m)
 hd = [49 38 60];          % vector of heights for direction (m)
-hT = 2;                   % vector of heights for temperature (m) 
+hT = 3;                   % vector of heights for temperature (m) 
 
 nobs = size(wind,1);      % # of observations
 
