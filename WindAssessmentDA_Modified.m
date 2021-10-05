@@ -3,6 +3,8 @@
 
 wind = readtable('winddata_new.txt');
 
+%% Setup data
+
 % Initialize storage of hub velocities, instantaneous kinetic energy flux, and air density in the dataset
 wind.vhub = zeros(size(wind,1),1);
 wind.phub = zeros(size(wind,1),1);
@@ -68,7 +70,8 @@ istuck = [22 26 30];   % indices for wind direction sensor stuck test
 % Create variable to store statistical analysis results
 wresults = [];       % structure variable for results
 
-% Visualize Data
+%% Visualize Data
+
 clc
 close all
 figure
