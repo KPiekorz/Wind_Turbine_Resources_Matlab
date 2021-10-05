@@ -13,7 +13,7 @@ function fcnvdistplot(wresults,vnames)
 
 % Copyright 2009 - 2011 MathWorks, Inc.
 
-bar(wresults.vdist.vbins,wresults.vdist.(vnames))
+bar(wresults.vdist.vbins, wresults.vdist.(vnames))
 axis tight
 axis 'auto y'
 xlabel('Wind velocity (m/s)')

@@ -119,7 +119,7 @@ close all
 % Another view on the data is to compute and display the frequency the
 % averaged wind speed was with in a certain range.  Let's create the wind
 % speed distribution. 
-vmax = max(max(table2array(wind(:,ivh))));
+vmax = 20; %max(max(table2array(wind(:,ivh))));
 
 % Bin centers for histogram (m/s)
 wresults.vdist.vbins = (0:1:ceil(vmax))';
@@ -137,7 +137,7 @@ for ii = 1:length(vnames)
     fcnvdistplot(wresults, vnames{ii});
 end
 
-clear ii vmax vnames
+% clear ii vmax vnames
     
 %% Wind Rose
 
